@@ -6,13 +6,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
+import statistics.controller.App;
+import statistics.model.Player;
+import statistics.model.statistics.AttackCountFrequency;
 import statistics.model.statistics.EventStat;
 import statistics.model.statistics.GameScore;
+import statistics.model.statistics.PassCountFrequency;
 import statistics.model.statistics.PlayerStats;
+import statistics.model.statistics.ZoneSuccessFail;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -84,7 +90,7 @@ public class EventStatisticsDao {
 	public List<PlayerStats> getStatisticsByPlayer() {
 		Document match = Document.parse("{$match: {type: {$nin: [\"start_game\", \"end_game\"]}}}");
 		Document group = Document.parse("{$group: {_id: {player: \"$player\", type: \"$type\"},count: {$sum:1}}}");
-		Document sort = Document.parse("{$sort: {\"_id.player\":1}}");
+		Document sort = Document.parse("{$sort: {\"_id.player\":1, \"_id.type\":1}}");
 		Document project = Document.parse("{$project: {_id: 0, player: \"$_id.player\", type: \"$_id.type\", \"count\": 1}}");
 		List<Document> results = new ArrayList<Document>();
 		collection.aggregate(Arrays.asList(match, group, sort, project)).into(results);
@@ -101,7 +107,13 @@ public class EventStatisticsDao {
 		}
 		List<PlayerStats> playerStatsList = new ArrayList<PlayerStats>();
 		for (Entry<String, List<EventStat>> entry : map.entrySet()) {
-			playerStatsList.add(new PlayerStats(entry.getKey(), entry.getValue()));
+			for (Player player : App.PLAYERS_FULL) {
+				if (player.getNumber().equals(entry.getKey())) {
+					playerStatsList.add(new PlayerStats(entry.getKey(), player.getName(), entry.getValue()));
+					break;
+				}
+			}
+
 		}
 		return playerStatsList;
 	}
@@ -119,7 +131,149 @@ public class EventStatisticsDao {
 			final int count = document.getInteger("count");
 			events.add(new EventStat(type, count));
 		}
+		String name = null;
+		for (Player player : App.PLAYERS_FULL) {
+			if (player.getNumber().equals(tshirtNumber)) {
+				name = player.getName();
+				break;
+			}
+		}
+		return new PlayerStats(tshirtNumber, name, events);
+	}
 
-		return new PlayerStats(tshirtNumber, events);
+	public List<ZoneSuccessFail> getZoneSuccessFail() {
+		Document match = Document.parse("{$match: {type: {$in: [\"score\", \"dropZone\"]}}}");
+		Document group = Document.parse("{$group: {_id: {\"game\":\"$gameName\", \"type\":\"$type\"}, count:{$sum:1}}}");
+		Document project = Document.parse("{$project:{_id: 0, game: \"$_id.game\", type: \"$_id.type\", count: 1}}");
+		Document sort = Document.parse("{$sort: {\"game\": 1}}");
+		List<Document> results = new ArrayList<Document>();
+		collection.aggregate(Arrays.asList(match, group, project, sort)).into(results);
+
+		Map<String, List<EventStat>> map = new TreeMap<String, List<EventStat>>();
+		for (Document document : results) {
+			final String game = document.getString("game");
+			if (!map.containsKey(game)) {
+				map.put(game, new ArrayList<EventStat>());
+			}
+			final String type = document.getString("type");
+			final Integer count = document.getInteger("count");
+			map.get(game).add(new EventStat(type, count));
+		}
+
+		List<ZoneSuccessFail> successFailList = new ArrayList<ZoneSuccessFail>();
+		for (Entry<String, List<EventStat>> entry : map.entrySet()) {
+			List<EventStat> successFail = entry.getValue();
+			int success = 0;
+			int fail = 0;
+			for (EventStat eventStat : successFail) {
+				if (eventStat.getType().equals("score")) {
+					success = eventStat.getCount();
+				} else if (eventStat.getType().equals("dropZone")) {
+					fail = eventStat.getCount();
+				}
+			}
+			successFailList.add(new ZoneSuccessFail(entry.getKey(), success, fail));
+		}
+
+		return successFailList;
+	}
+
+	public List<PassCountFrequency> getPassCountFrequencySuccess() {
+		List<Document> documents = new ArrayList<Document>();
+		collection.find().sort(new Document("created", 1)).into(documents);
+		int count = 0;
+		Map<Integer, Integer> map = new TreeMap<Integer, Integer>();
+		for (Document document : documents) {
+			String type = document.getString("type");
+			if (type.startsWith("throw")) {
+				count++;
+			}
+
+			if (type.equals("score")) {
+				if (!map.containsKey(count)) {
+					map.put(count, 1);
+				} else {
+					map.put(count, map.get(count) + 1);
+				}
+				count = 0;
+			}
+
+			if (type.equals("dropZone") || type.equals("drop") || type.equals("start_game") || type.equals("end_game")) {
+				count = 0;
+			}
+		}
+
+		List<PassCountFrequency> passCountFrequencies = new ArrayList<PassCountFrequency>();
+		for (Entry<Integer, Integer> entry : map.entrySet()) {
+			passCountFrequencies.add(new PassCountFrequency(entry.getKey(), entry.getValue()));
+		}
+
+		return passCountFrequencies;
+	}
+
+	public List<PassCountFrequency> getPassCountFrequencyFail() {
+		List<Document> documents = new ArrayList<Document>();
+		collection.find().sort(new Document("created", 1)).into(documents);
+		int count = 0;
+		Map<Integer, Integer> map = new TreeMap<Integer, Integer>();
+		for (Document document : documents) {
+			String type = document.getString("type");
+			if (type.startsWith("throw")) {
+				count++;
+			}
+
+			if (type.equals("score") || type.equals("start_game") || type.equals("end_game")) {
+				count = 0;
+			}
+
+			if (type.equals("dropZone") || type.equals("drop")) {
+				if (!map.containsKey(count)) {
+					map.put(count, 1);
+				} else {
+					map.put(count, map.get(count) + 1);
+				}
+				count = 0;
+			}
+		}
+
+		List<PassCountFrequency> passCountFrequencies = new ArrayList<PassCountFrequency>();
+		for (Entry<Integer, Integer> entry : map.entrySet()) {
+			passCountFrequencies.add(new PassCountFrequency(entry.getKey(), entry.getValue()));
+		}
+
+		return passCountFrequencies;
+	}
+
+	public Object getAttackCountFrequency() {
+		List<Document> documents = new ArrayList<Document>();
+		collection.find().sort(new Document("created", 1)).into(documents);
+		int count = 1;
+		Map<Integer, Integer> map = new TreeMap<Integer, Integer>();
+		for (Document document : documents) {
+			String type = document.getString("type");
+			if (type.startsWith("drop")) {
+				count++;
+			}
+
+			if (type.equals("score")) {
+				if (!map.containsKey(count)) {
+					map.put(count, 1);
+				} else {
+					map.put(count, map.get(count) + 1);
+				}
+				count = 1;
+			}
+
+			if (type.equals("start_game") || type.equals("end_game")) {
+				count = 1;
+			}
+		}
+
+		List<AttackCountFrequency> frequencies = new ArrayList<AttackCountFrequency>();
+		for (Entry<Integer, Integer> entry : map.entrySet()) {
+			frequencies.add(new AttackCountFrequency(entry.getKey(), entry.getValue()));
+		}
+
+		return frequencies;
 	}
 }

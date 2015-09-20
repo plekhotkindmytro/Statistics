@@ -20,6 +20,21 @@ import freemarker.template.Configuration;
 
 public class App {
 
+	public static final List<Player> PLAYERS_FULL = new ArrayList<Player>();
+	static {
+		PLAYERS_FULL.add(new Player("Аліна Чупрунова", "17"));
+		PLAYERS_FULL.add(new Player("Анна Войтюк", "5"));
+		PLAYERS_FULL.add(new Player("Вікторія Газда", "14"));
+		PLAYERS_FULL.add(new Player("Ірина Алєксєєва", "7"));
+		PLAYERS_FULL.add(new Player("Христина Скварок", "13"));
+		PLAYERS_FULL.add(new Player("Оксана Яковина", "33"));
+		PLAYERS_FULL.add(new Player("Олена Бойко", "15"));
+		PLAYERS_FULL.add(new Player("Світлана Бєдна", "3"));
+		PLAYERS_FULL.add(new Player("Софія Дунаєва", "8"));
+		PLAYERS_FULL.add(new Player("Софія Кастрикіна", "25"));
+		PLAYERS_FULL.add(new Player("Тетяна Мачулка", "23"));
+	}
+	
 	public static final List<Player> PLAYERS = new ArrayList<Player>();
 	static {
 		PLAYERS.add(new Player("Аліна Чупрунова", "17"));

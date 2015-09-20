@@ -19,10 +19,26 @@ public class EventStatisticsController {
 		get("/players/stats", (request, response) -> {
 			return eventStatisticsDao.getStatisticsByPlayer();
 		}, new JsonTransformer());
-		
+
 		get("/players/:number/stats", (request, response) -> {
 			String tshirtNumber = request.params(":number");
 			return eventStatisticsDao.getStatisticsByPlayer(tshirtNumber);
+		}, new JsonTransformer());
+
+		get("/games/zoneSuccessFail", (request, response) -> {
+			return eventStatisticsDao.getZoneSuccessFail();
+		}, new JsonTransformer());
+		
+		get("/games/points/success/passCountFrequency", (request, response) -> {
+			return eventStatisticsDao.getPassCountFrequencySuccess();
+		}, new JsonTransformer());
+		
+		get("/games/points/fail/passCountFrequency", (request, response) -> {
+			return eventStatisticsDao.getPassCountFrequencyFail();
+		}, new JsonTransformer());
+		
+		get("/games/points/success/attacksCountFrequency", (request, response) -> {
+			return eventStatisticsDao.getAttackCountFrequency();
 		}, new JsonTransformer());
 
 		get("/fix", (request, response) -> {
