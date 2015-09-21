@@ -11,7 +11,8 @@ public class EventController {
 
 	public EventController(EventDao eventDao) {
 		this.eventDao = eventDao;
-		initializeRoutes();
+		// TODO: set a security to it
+		//initializeRoutes();
 	}
 
 	private void initializeRoutes() {

@@ -41,9 +41,10 @@ public class EventStatisticsController {
 			return eventStatisticsDao.getAttackCountFrequency();
 		}, new JsonTransformer());
 
-		get("/fix", (request, response) -> {
-			eventStatisticsDao.fixData();
-			return true;
-		});
+		// Reimplement as update
+//		get("/fix", (request, response) -> {
+//			eventStatisticsDao.fixData();
+//			return true;
+//		});
 	}
 }

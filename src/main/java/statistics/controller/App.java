@@ -14,6 +14,7 @@ import statistics.dao.EventStatisticsDao;
 import statistics.model.Player;
 
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoDatabase;
 
 import freemarker.template.Configuration;
@@ -80,15 +81,22 @@ public class App {
 			Map<String, Object> attributes = new HashMap<>();
 
 			attributes.put("players", PLAYERS);
-			return new ModelAndView(attributes, "index.html");
+			return new ModelAndView(attributes, "statistics.html");
 		}, freeMarkerEngine);
+		
+//		get("/admin", (request, response) -> {
+//			Map<String, Object> attributes = new HashMap<>();
+//
+//			attributes.put("players", PLAYERS);
+//			return new ModelAndView(attributes, "index.html");
+//		}, freeMarkerEngine);
 
 		get("/players", (request, response) -> {
 			return PLAYERS;
 		}, new JsonTransformer());
 
-		final MongoClient client = new MongoClient();
-		final MongoDatabase database = client.getDatabase("frisbee");
+		final MongoClient client = new MongoClient(new MongoClientURI("mongodb://<user>:<password>@ds051903.mongolab.com:51903/heroku_q1k9ht7d"));
+		final MongoDatabase database = client.getDatabase("heroku_q1k9ht7d");
 
 		new EventController(new EventDao(database));
 		new EventStatisticsController(new EventStatisticsDao(database));
