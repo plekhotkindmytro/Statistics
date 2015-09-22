@@ -23,17 +23,17 @@ public class App {
 
 	public static final List<Player> PLAYERS_FULL = new ArrayList<Player>();
 	static {
-		PLAYERS_FULL.add(new Player("РђР»С–РЅР° Р§СѓРїСЂСѓРЅРѕРІР°", "17"));
-		PLAYERS_FULL.add(new Player("РђРЅРЅР° Р’РѕР№С‚СЋРє", "5"));
-		PLAYERS_FULL.add(new Player("Р’С–РєС‚РѕСЂС–СЏ Р“Р°Р·РґР°", "14"));
-		PLAYERS_FULL.add(new Player("Р†СЂРёРЅР° РђР»С”РєСЃС”С”РІР°", "7"));
-		PLAYERS_FULL.add(new Player("РҐСЂРёСЃС‚РёРЅР° РЎРєРІР°СЂРѕРє", "13"));
-		PLAYERS_FULL.add(new Player("РћРєСЃР°РЅР° РЇРєРѕРІРёРЅР°", "33"));
-		PLAYERS_FULL.add(new Player("РћР»РµРЅР° Р‘РѕР№РєРѕ", "15"));
-		PLAYERS_FULL.add(new Player("РЎРІС–С‚Р»Р°РЅР° Р‘С”РґРЅР°", "3"));
-		PLAYERS_FULL.add(new Player("РЎРѕС„С–СЏ Р”СѓРЅР°С”РІР°", "8"));
-		PLAYERS_FULL.add(new Player("РЎРѕС„С–СЏ РљР°СЃС‚СЂРёРєС–РЅР°", "25"));
-		PLAYERS_FULL.add(new Player("РўРµС‚СЏРЅР° РњР°С‡СѓР»РєР°", "23"));
+		PLAYERS_FULL.add(new Player("Аліна Чупрунова", "17"));
+		PLAYERS_FULL.add(new Player("Анна Войтюк", "5"));
+		PLAYERS_FULL.add(new Player("Вікторія Газда", "14"));
+		PLAYERS_FULL.add(new Player("Ірина Алексєєва", "7"));
+		PLAYERS_FULL.add(new Player("Христина Скварок", "13"));
+		PLAYERS_FULL.add(new Player("Оксана Яковина", "33"));
+		PLAYERS_FULL.add(new Player("Олена Бойко", "15"));
+		PLAYERS_FULL.add(new Player("Світлана Бєдна", "3"));
+		PLAYERS_FULL.add(new Player("Софія Дунаєва", "8"));
+		PLAYERS_FULL.add(new Player("Софія Кастрикіна", "25"));
+		PLAYERS_FULL.add(new Player("Тетяна Мачулка", "23"));
 	}
 
 	public static final List<Player> PLAYERS = new ArrayList<Player>();
@@ -97,14 +97,17 @@ public class App {
 		}, new JsonTransformer());
 
 		final String mongoClientUri;
+		final String databaseName;
 		final String mongoLabUri = System.getenv().get("MONGOLAB_URI");
 		if (mongoLabUri == null) {
 			mongoClientUri = "mongodb://localhost:27017/frisbee";
+			databaseName = "frisbee";
 		} else {
 			mongoClientUri = mongoLabUri;
+			databaseName = "heroku_q1k9ht7d";
 		}
 		final MongoClient client = new MongoClient(new MongoClientURI(mongoClientUri));
-		final MongoDatabase database = client.getDatabase("heroku_q1k9ht7d");
+		final MongoDatabase database = client.getDatabase(databaseName);
 
 		new EventController(new EventDao(database));
 		new EventStatisticsController(new EventStatisticsDao(database));
