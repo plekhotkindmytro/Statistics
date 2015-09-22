@@ -35,7 +35,7 @@ public class App {
 		PLAYERS_FULL.add(new Player("Софія Кастрикіна", "25"));
 		PLAYERS_FULL.add(new Player("Тетяна Мачулка", "23"));
 	}
-	
+
 	public static final List<Player> PLAYERS = new ArrayList<Player>();
 	static {
 		PLAYERS.add(new Player("Аліна Чупрунова", "17"));
@@ -58,18 +58,19 @@ public class App {
 		cfg.setDefaultEncoding("UTF-8");
 		return cfg;
 	}
-	
+
 	static int getHerokuAssignedPort() {
-        ProcessBuilder processBuilder = new ProcessBuilder();
-        if (processBuilder.environment().get("PORT") != null) {
-            return Integer.parseInt(processBuilder.environment().get("PORT"));
-        }
-        return 4567; //return default port if heroku-port isn't set (i.e. on localhost)
-    }
+		ProcessBuilder processBuilder = new ProcessBuilder();
+		if (processBuilder.environment().get("PORT") != null) {
+			return Integer.parseInt(processBuilder.environment().get("PORT"));
+		}
+		return 4567; // return default port if heroku-port isn't set (i.e. on
+						// localhost)
+	}
 
 	public static void main(String[] args) {
 		port(getHerokuAssignedPort());
-		
+
 		staticFileLocation("/public");
 		exception(Exception.class, (e, request, response) -> {
 			response.status(500);
@@ -83,19 +84,26 @@ public class App {
 			attributes.put("players", PLAYERS);
 			return new ModelAndView(attributes, "statistics.html");
 		}, freeMarkerEngine);
-		
-//		get("/admin", (request, response) -> {
-//			Map<String, Object> attributes = new HashMap<>();
-//
-//			attributes.put("players", PLAYERS);
-//			return new ModelAndView(attributes, "index.html");
-//		}, freeMarkerEngine);
+
+		// get("/admin", (request, response) -> {
+		// Map<String, Object> attributes = new HashMap<>();
+		//
+		// attributes.put("players", PLAYERS);
+		// return new ModelAndView(attributes, "index.html");
+		// }, freeMarkerEngine);
 
 		get("/players", (request, response) -> {
 			return PLAYERS;
 		}, new JsonTransformer());
 
-		final MongoClient client = new MongoClient(new MongoClientURI("mongodb://<user>:<password>@ds051903.mongolab.com:51903/heroku_q1k9ht7d"));
+		final String mongoClientUri;
+		final String mongoLabUri = System.getenv().get("MONGOLAB_URI");
+		if (mongoLabUri == null) {
+			mongoClientUri = "mongodb://localhost:27017/frisbee";
+		} else {
+			mongoClientUri = mongoLabUri;
+		}
+		final MongoClient client = new MongoClient(new MongoClientURI(mongoClientUri));
 		final MongoDatabase database = client.getDatabase("heroku_q1k9ht7d");
 
 		new EventController(new EventDao(database));
