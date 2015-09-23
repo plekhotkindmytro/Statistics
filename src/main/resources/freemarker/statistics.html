@@ -13,21 +13,106 @@
 	<div class="container">
 		<div class="row">
 			<div class="col-md-12">
-				<h1>Statistics</h1>
+				<h1>Статистика гравців команди Flames на ОЧУ 2015</h1>
 			</div>
 		</div>
-		<div id="stats"></div>
+		<hr>
 		<div class="row">
 			<div class="col-md-12">
-				<h2>Порівняння активності гравців по кількості кидків і втрат</h2>
-				<div id ="chart-player-comparison"></div>
+				<p>
+					Найбільш активний гравець по всім характеристикам: <span
+						id="mostActive"></span>
+				</p>
+				<p>
+					Найбільш активний гравець в полі: <span id="mostActiveInField"></span>
+				</p>
+				<p>
+					Найкращий лонг: <span id="bestLong"></span>
+				</p>
+				<p>
+					Найкращий гравець по кількості успішних пасів в зону: <span
+						id="bestZonePass"></span>
+				</p>
+				<p>
+					Гравець з найменшим відсотком помилок: <span
+						id="mostAccurate"></span>
+				</p>
+				<p>
+					Гравець з найбільшим відсотком помилок: <span
+						id="leastAccurate"></span>
+				</p>
+				<p>
+					Гравець, що зробив найбільшу кількість помилок: <span id="mostFailing"></span>
+				</p>
+				<p>
+					Найчастіший пас від <span id="passFrom"></span> до <span id="passTo"></span>
+				</p>
+			</div>
+		</div>
+		<hr>
+		<div class="row">
+			<div class="col-md-12">
+				<div id="chart-player-comparison"></div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-6">
+				<div id="chart-player-activity-percent"></div>
+			</div>
+			<div class="col-md-6">
+				<div id="chart-player-fail-percent"></div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-6">
+				<div id="chart-player-score-percent"></div>
+			</div>
+			<div class="col-md-6">
+				<div id="chart-player-pass-score-percent"></div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<h2>Графік показує хто кому пасував найчастіше</h2>
+				<h3><b>Пояснення:</b> тут показані топ 20 пасів по частоті їх здійснення на полі</h3>
+				<div id="chart-passes"></div>
+			</div>
+		</div>
+		<hr>
+		<div class="row">
+			<div class="col-md-12">
+				<h2>Детальніше по кожному гравцю</h2>
+				<div id="stats"></div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<h2>А також окремо по іграм :)</h2>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<h2>Відсоток успішних кидків в зону</h2>
+				<div id="chart-zoneSuccessFail"></div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<h2>Кількість послідовних пасів до занесення поінта</h2>
+				<div id="chart-passCountFrequencySuccess"></div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<h2>Кількість пасів до втрати диску</h2>
+				<div id="chart-passCountFrequencyFail"></div>
 			</div>
 		</div>
 	</div>
 
 	<script type="text/javascript" src="/js/jquery-1.11.3.min.js"></script>
 	<script type="text/javascript" src="/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="/js/games.js"></script>
 	<script type="text/javascript" src="/js/statistics.js"></script>
-
 </body>
 </html>

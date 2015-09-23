@@ -40,11 +40,15 @@ public class EventStatisticsController {
 		get("/games/points/success/attacksCountFrequency", (request, response) -> {
 			return eventStatisticsDao.getAttackCountFrequency();
 		}, new JsonTransformer());
+		
+		get("/passes", (request, response) -> {
+			return eventStatisticsDao.getPasses();
+		}, new JsonTransformer());
 
 		// Reimplement as update
-//		get("/fix", (request, response) -> {
-//			eventStatisticsDao.fixData();
-//			return true;
-//		});
+		get("/fix", (request, response) -> {
+			eventStatisticsDao.fixData();
+			return true;
+		});
 	}
 }

@@ -2,16 +2,21 @@ package statistics.dao;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
 import statistics.controller.App;
+import statistics.model.Pass;
 import statistics.model.Player;
 import statistics.model.statistics.AttackCountFrequency;
 import statistics.model.statistics.EventStat;
@@ -244,7 +249,7 @@ public class EventStatisticsDao {
 		return passCountFrequencies;
 	}
 
-	public Object getAttackCountFrequency() {
+	public List<AttackCountFrequency> getAttackCountFrequency() {
 		List<Document> documents = new ArrayList<Document>();
 		collection.find().sort(new Document("created", 1)).into(documents);
 		int count = 1;
@@ -275,5 +280,82 @@ public class EventStatisticsDao {
 		}
 
 		return frequencies;
+	}
+
+	public List<Pass> getPasses() {
+		List<Document> documents = new ArrayList<Document>();
+		collection.find().sort(new Document("created", 1)).into(documents);
+
+		String from = null;
+
+		List<Pass> passList = new ArrayList<Pass>();
+		Pass currentPass = null;
+		for (Document document : documents) {
+
+			String type = document.getString("type");
+			String player = document.getString("player");
+			if (type.startsWith("throw")) {
+
+				if (currentPass == null) {
+					currentPass = new Pass();
+				}
+				if (from == null) {
+					currentPass.setFrom(player);
+					from = player;
+				} else {
+					currentPass.setTo(player);
+					if (passList.contains(currentPass)) {
+						passList.get(passList.indexOf(currentPass)).incCount();
+					} else {
+						passList.add(currentPass);
+					}
+					currentPass = new Pass();
+					currentPass.setFrom(player);
+					from = player;
+				}
+			} else if (type.equals("score")) {
+				if (currentPass == null) {
+					System.out.println(document);
+				} else {
+					currentPass.setTo(player);
+					if (passList.contains(currentPass)) {
+						passList.get(passList.indexOf(currentPass)).incCount();
+					} else {
+						passList.add(currentPass);
+					}
+
+					currentPass = null;
+					from = null;
+				}
+			} else if (type.startsWith("drop")) {
+				from = null;
+				currentPass = null;
+			} else if (type.equals("start_game") || type.equals("end_game")) {
+				from = null;
+				currentPass = null;
+			}
+		}
+
+		Collections.sort(passList, new Comparator<Pass>() {
+			@Override
+			public int compare(Pass o1, Pass o2) {
+				return o2.getCount() - o1.getCount();
+			}
+		});
+
+		for (int i = 0; i < passList.size(); i++) {
+
+			for (Player player : App.PLAYERS_FULL) {
+				if (passList.get(i).getFrom().equals("Від: " + player.getNumber())) {
+					passList.get(i).setFrom(player.getName());
+				}
+
+				if (passList.get(i).getTo().equals("До: " + player.getNumber())) {
+					passList.get(i).setTo(player.getName());
+				}
+			}
+		}
+		int maxCountOfElements = 20;
+		return passList.subList(0, maxCountOfElements > passList.size() ? passList.size() : maxCountOfElements);
 	}
 }
