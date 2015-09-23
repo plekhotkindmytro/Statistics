@@ -19,7 +19,7 @@ public class Pass {
 	}
 
 	public void setFrom(String from) {
-		this.from = "³�: " + from;
+		this.from = "Від: " + from;
 	}
 
 	public String getTo() {
@@ -27,7 +27,7 @@ public class Pass {
 	}
 
 	public void setTo(String to) {
-		this.to = "��: " + to;
+		this.to = "До: " + to;
 	}
 
 	public int getCount() {
