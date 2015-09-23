@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.InetAddressValidator;
-import org.bson.Document;
 
 import spark.ModelAndView;
 import spark.template.freemarker.FreeMarkerEngine;
@@ -22,7 +21,6 @@ import statistics.model.Player;
 
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
-import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
 import freemarker.template.Configuration;
@@ -86,23 +84,7 @@ public class App {
 			response.body(e.getMessage());
 		});
 
-		final String mongoClientUri;
-		final String databaseName;
-		final String mongoLabUri = System.getenv().get("MONGOLAB_URI");
-		if (mongoLabUri == null) {
-			mongoClientUri = "mongodb://localhost:27017/frisbee";
-			databaseName = "frisbee";
-		} else {
-			mongoClientUri = mongoLabUri;
-			databaseName = "heroku_q1k9ht7d";
-		}
-		final MongoClient client = new MongoClient(new MongoClientURI(mongoClientUri));
-		final MongoDatabase database = client.getDatabase(databaseName);
-
 		get("/", (request, response) -> {
-			final String ipAddress = IpAddressFinder.getClientIpAddress(request.raw());
-			MongoCollection<Document> collection = database.getCollection("ips");
-			collection.insertOne(new Document("ip", ipAddress));
 
 			Map<String, Object> attributes = new HashMap<>();
 
@@ -120,6 +102,19 @@ public class App {
 		get("/players", (request, response) -> {
 			return PLAYERS;
 		}, new JsonTransformer());
+
+		final String mongoClientUri;
+		final String databaseName;
+		final String mongoLabUri = System.getenv().get("MONGOLAB_URI");
+		if (mongoLabUri == null) {
+			mongoClientUri = "mongodb://localhost:27017/frisbee";
+			databaseName = "frisbee";
+		} else {
+			mongoClientUri = mongoLabUri;
+			databaseName = "heroku_q1k9ht7d";
+		}
+		final MongoClient client = new MongoClient(new MongoClientURI(mongoClientUri));
+		final MongoDatabase database = client.getDatabase(databaseName);
 
 		new EventController(new EventDao(database));
 		new FeedbackController(new FeedbackDao(database));
