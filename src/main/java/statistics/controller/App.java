@@ -7,6 +7,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.validator.routines.InetAddressValidator;
+import org.bson.Document;
+
 import spark.ModelAndView;
 import spark.template.freemarker.FreeMarkerEngine;
 import statistics.dao.EventDao;
@@ -16,6 +22,7 @@ import statistics.model.Player;
 
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
+import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
 import freemarker.template.Configuration;
@@ -79,7 +86,24 @@ public class App {
 			response.body(e.getMessage());
 		});
 
+		final String mongoClientUri;
+		final String databaseName;
+		final String mongoLabUri = System.getenv().get("MONGOLAB_URI");
+		if (mongoLabUri == null) {
+			mongoClientUri = "mongodb://localhost:27017/frisbee";
+			databaseName = "frisbee";
+		} else {
+			mongoClientUri = mongoLabUri;
+			databaseName = "heroku_q1k9ht7d";
+		}
+		final MongoClient client = new MongoClient(new MongoClientURI(mongoClientUri));
+		final MongoDatabase database = client.getDatabase(databaseName);
+
 		get("/", (request, response) -> {
+			final String ipAddress = IpAddressFinder.getClientIpAddress(request.raw());
+			MongoCollection<Document> collection = database.getCollection("ips");
+			collection.insertOne(new Document("ip", ipAddress));
+
 			Map<String, Object> attributes = new HashMap<>();
 
 			attributes.put("players", PLAYERS);
@@ -97,22 +121,43 @@ public class App {
 			return PLAYERS;
 		}, new JsonTransformer());
 
-		final String mongoClientUri;
-		final String databaseName;
-		final String mongoLabUri = System.getenv().get("MONGOLAB_URI");
-		if (mongoLabUri == null) {
-			mongoClientUri = "mongodb://localhost:27017/frisbee";
-			databaseName = "frisbee";
-		} else {
-			mongoClientUri = mongoLabUri;
-			databaseName = "heroku_q1k9ht7d";
-		}
-		final MongoClient client = new MongoClient(new MongoClientURI(mongoClientUri));
-		final MongoDatabase database = client.getDatabase(databaseName);
-
 		new EventController(new EventDao(database));
 		new FeedbackController(new FeedbackDao(database));
 		new EventStatisticsController(new EventStatisticsDao(database));
 
+	}
+
+	private static class IpAddressFinder {
+
+		private static final String[] HEADERS_TO_TRY = { "X-Forwarded-For", "Proxy-Client-IP", "WL-Proxy-Client-IP", "HTTP_X_FORWARDED_FOR", "HTTP_X_FORWARDED",
+				"HTTP_X_CLUSTER_CLIENT_IP", "HTTP_CLIENT_IP", "HTTP_FORWARDED_FOR", "HTTP_FORWARDED", "HTTP_VIA", "REMOTE_ADDR" };
+
+		public static String getClientIpAddress(HttpServletRequest request) {
+			for (String header : HEADERS_TO_TRY) {
+				final String ipString = request.getHeader(header);
+				final String ip = getIpFromString(ipString);
+				if (ip != null) {
+					return ip;
+				}
+			}
+			return request.getRemoteAddr();
+		}
+
+		private static String getIpFromString(String ipAddressesString) {
+			if (StringUtils.isBlank(ipAddressesString)) {
+				return null;
+			}
+
+			final String ips[] = StringUtils.split(ipAddressesString, ",");
+			if (ips.length == 0) {
+				return null;
+			}
+
+			if (!InetAddressValidator.getInstance().isValid(ips[0])) {
+				return null;
+			}
+
+			return ips[0];
+		}
 	}
 }

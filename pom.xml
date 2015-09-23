@@ -51,7 +51,8 @@
 					<processTypes>
 						<!-- Tell Heroku how to launch your application -->
 						<!-- You might have to remove the ./ in front -->
-						<web>java -jar target/statistics-0.0.1-SNAPSHOT-jar-with-dependencies.jar</web>
+						<web>java -jar
+							target/statistics-0.0.1-SNAPSHOT-jar-with-dependencies.jar</web>
 					</processTypes>
 				</configuration>
 			</plugin>
@@ -83,6 +84,16 @@
 			<groupId>org.mongodb</groupId>
 			<artifactId>mongodb-driver</artifactId>
 			<version>3.0.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.4</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-validator</groupId>
+			<artifactId>commons-validator</artifactId>
+			<version>1.4.1</version>
 		</dependency>
 	</dependencies>
 </project>
