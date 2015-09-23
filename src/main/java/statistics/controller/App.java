@@ -7,11 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.validator.routines.InetAddressValidator;
-
 import spark.ModelAndView;
 import spark.template.freemarker.FreeMarkerEngine;
 import statistics.dao.EventDao;
@@ -120,39 +115,5 @@ public class App {
 		new FeedbackController(new FeedbackDao(database));
 		new EventStatisticsController(new EventStatisticsDao(database));
 
-	}
-
-	private static class IpAddressFinder {
-
-		private static final String[] HEADERS_TO_TRY = { "X-Forwarded-For", "Proxy-Client-IP", "WL-Proxy-Client-IP", "HTTP_X_FORWARDED_FOR", "HTTP_X_FORWARDED",
-				"HTTP_X_CLUSTER_CLIENT_IP", "HTTP_CLIENT_IP", "HTTP_FORWARDED_FOR", "HTTP_FORWARDED", "HTTP_VIA", "REMOTE_ADDR" };
-
-		public static String getClientIpAddress(HttpServletRequest request) {
-			for (String header : HEADERS_TO_TRY) {
-				final String ipString = request.getHeader(header);
-				final String ip = getIpFromString(ipString);
-				if (ip != null) {
-					return ip;
-				}
-			}
-			return request.getRemoteAddr();
-		}
-
-		private static String getIpFromString(String ipAddressesString) {
-			if (StringUtils.isBlank(ipAddressesString)) {
-				return null;
-			}
-
-			final String ips[] = StringUtils.split(ipAddressesString, ",");
-			if (ips.length == 0) {
-				return null;
-			}
-
-			if (!InetAddressValidator.getInstance().isValid(ips[0])) {
-				return null;
-			}
-
-			return ips[0];
-		}
 	}
 }
