@@ -11,6 +11,7 @@ import spark.ModelAndView;
 import spark.template.freemarker.FreeMarkerEngine;
 import statistics.dao.EventDao;
 import statistics.dao.EventStatisticsDao;
+import statistics.dao.FeedbackDao;
 import statistics.model.Player;
 
 import com.mongodb.MongoClient;
@@ -79,6 +80,7 @@ public class App {
 		});
 
 		get("/", (request, response) -> {
+
 			Map<String, Object> attributes = new HashMap<>();
 
 			attributes.put("players", PLAYERS);
@@ -110,6 +112,7 @@ public class App {
 		final MongoDatabase database = client.getDatabase(databaseName);
 
 		new EventController(new EventDao(database));
+		new FeedbackController(new FeedbackDao(database));
 		new EventStatisticsController(new EventStatisticsDao(database));
 
 	}

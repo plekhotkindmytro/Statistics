@@ -346,11 +346,11 @@ public class EventStatisticsDao {
 		for (int i = 0; i < passList.size(); i++) {
 
 			for (Player player : App.PLAYERS_FULL) {
-				if (passList.get(i).getFrom().equals("³�: " + player.getNumber())) {
+				if (passList.get(i).getFrom().equals("Від: " + player.getNumber())) {
 					passList.get(i).setFrom(player.getName());
 				}
 
-				if (passList.get(i).getTo().equals("��: " + player.getNumber())) {
+				if (passList.get(i).getTo().equals("До: " + player.getNumber())) {
 					passList.get(i).setTo(player.getName());
 				}
 			}

@@ -7,10 +7,47 @@
 <title>Statistics</title>
 <link href="/css/bootstrap.min.css" rel="stylesheet">
 <link href="/css/bootstrap-theme.min.css" rel="stylesheet">
+<link href="/css/main.css" rel="stylesheet">
+<script>
+	(function(i, s, o, g, r, a, m) {
+		i['GoogleAnalyticsObject'] = r;
+		i[r] = i[r] || function() {
+			(i[r].q = i[r].q || []).push(arguments)
+		}, i[r].l = 1 * new Date();
+		a = s.createElement(o), m = s.getElementsByTagName(o)[0];
+		a.async = 1;
+		a.src = g;
+		m.parentNode.insertBefore(a, m)
+	})(window, document, 'script', '//www.google-analytics.com/analytics.js',
+			'ga');
+
+	ga('create', 'UA-68034500-1', 'auto');
+	ga('send', 'pageview');
+</script>
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 </head>
 <body>
+
 	<div class="container">
+		<div class="row">
+			<div class="span12">
+				<div class="thumbnail center well well-small text-center">
+					<h1>Ultimate-statistics</h1>
+					<img src="/images/coming.png">
+					<h4>Лиши свій e-mail, щоб ми могли повідомити тебе, коли
+						програма буде готова для скачування</h4>
+
+					<form class="form-inline">
+						<div class="form-group form-group-lg">
+							<input type="text" class="form-control" id="emailUp"
+								placeholder="Ваш e-mail">
+						</div>
+						<button id="sendEmailUp" class="btn btn-success btn-lg">Повідомити
+							мене!</button>
+					</form>
+				</div>
+			</div>
+		</div>
 		<div class="row">
 			<div class="col-md-12">
 				<h1>Статистика гравців команди Flames на ОЧУ 2015</h1>
@@ -34,18 +71,18 @@
 						id="bestZonePass"></span>
 				</p>
 				<p>
-					Гравець з найменшим відсотком помилок: <span
-						id="mostAccurate"></span>
+					Гравець з найменшим відсотком помилок: <span id="mostAccurate"></span>
 				</p>
 				<p>
-					Гравець з найбільшим відсотком помилок: <span
-						id="leastAccurate"></span>
+					Гравець з найбільшим відсотком помилок: <span id="leastAccurate"></span>
 				</p>
 				<p>
-					Гравець, що зробив найбільшу кількість помилок: <span id="mostFailing"></span>
+					Гравець, що зробив найбільшу кількість помилок: <span
+						id="mostFailing"></span>
 				</p>
 				<p>
-					Найчастіший пас від <span id="passFrom"></span> до <span id="passTo"></span>
+					Найчастіший пас від <span id="passFrom"></span> до <span
+						id="passTo"></span>
 				</p>
 			</div>
 		</div>
@@ -74,7 +111,10 @@
 		<div class="row">
 			<div class="col-md-12">
 				<h2>Графік показує хто кому пасував найчастіше</h2>
-				<h3><b>Пояснення:</b> тут показані топ 20 пасів по частоті їх здійснення на полі</h3>
+				<h3>
+					<b>Пояснення:</b> тут показані топ 20 пасів по частоті їх
+					здійснення на полі
+				</h3>
 				<div id="chart-passes"></div>
 			</div>
 		</div>
@@ -108,11 +148,70 @@
 				<div id="chart-passCountFrequencyFail"></div>
 			</div>
 		</div>
+
+		<hr>
+		<div class="row">
+			<div class="span12">
+				<div class="thumbnail center well well-small text-center">
+					<h1>Ultimate-statistics</h1>
+					<img src="/images/coming.png">
+					<h4>Лиши свій e-mail, щоб ми могли повідомити тебе, коли
+						програма буде готова для скачування</h4>
+
+					<form class="form-inline">
+						<div class="form-group form-group-lg">
+							<input type="text" class="form-control" id="emailBottom"
+								placeholder="Ваш e-mail">
+						</div>
+						<button id="sendEmailBottom" class="btn btn-success btn-lg">Повідомити
+							мене!</button>
+					</form>
+				</div>
+			</div>
+		</div>
 	</div>
 
 	<script type="text/javascript" src="/js/jquery-1.11.3.min.js"></script>
 	<script type="text/javascript" src="/js/bootstrap.min.js"></script>
 	<script type="text/javascript" src="/js/games.js"></script>
 	<script type="text/javascript" src="/js/statistics.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function() {
+
+			$("#sendEmailBottom").on("click", function(e) {
+				var email = $("#emailBottom").val();
+				if (!email) {
+					alert("Будь ласка, введіть e-mail");
+				}
+				e.preventDefault();
+				$.ajax({
+					type : 'POST',
+					url : "/emails",
+					cache : false,
+					data : email,
+					success : function(result) {
+						alert("Дякуємо! Ваш запит прийнято.");
+					}
+				});
+			});
+
+			$("#sendEmailUp").on("click", function(e) {
+				var email = $("#emailUp").val();
+				if (!email) {
+					alert("Будь ласка, введіть e-mail");
+				}
+				e.preventDefault();
+				$.ajax({
+					type : 'POST',
+					url : "/emails",
+					cache : false,
+					data : email,
+					success : function(result) {
+						alert("Дякуємо! Ваш запит прийнято.");
+					}
+				});
+			});
+		});
+	</script>
 </body>
 </html>
