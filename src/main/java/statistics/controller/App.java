@@ -23,17 +23,17 @@ public class App {
 
 	public static final List<Player> PLAYERS_FULL = new ArrayList<Player>();
 	static {
-		PLAYERS_FULL.add(new Player("Аліна Чупрунова", "17"));
-		PLAYERS_FULL.add(new Player("Анна Войтюк", "5"));
-		PLAYERS_FULL.add(new Player("Вікторія Газда", "14"));
-		PLAYERS_FULL.add(new Player("Ірина Алексєєва", "7"));
-		PLAYERS_FULL.add(new Player("Христина Скварок", "13"));
-		PLAYERS_FULL.add(new Player("Оксана Яковина", "33"));
-		PLAYERS_FULL.add(new Player("Олена Бойко", "15"));
-		PLAYERS_FULL.add(new Player("Світлана Бєдна", "3"));
-		PLAYERS_FULL.add(new Player("Софія Дунаєва", "8"));
-		PLAYERS_FULL.add(new Player("Софія Кастрикіна", "25"));
-		PLAYERS_FULL.add(new Player("Тетяна Мачулка", "23"));
+		PLAYERS_FULL.add(new Player("РђР»С–РЅР° Р§СѓРїСЂСѓРЅРѕРІР°", "17"));
+		PLAYERS_FULL.add(new Player("РђРЅРЅР° Р’РѕР№С‚СЋРє", "5"));
+		PLAYERS_FULL.add(new Player("Р’С–РєС‚РѕСЂС–СЏ Р“Р°Р·РґР°", "14"));
+		PLAYERS_FULL.add(new Player("Р†СЂРёРЅР° РђР»РµРєСЃС”С”РІР°", "7"));
+		PLAYERS_FULL.add(new Player("РҐСЂРёСЃС‚РёРЅР° РЎРєРІР°СЂРѕРє", "13"));
+		PLAYERS_FULL.add(new Player("РћРєСЃР°РЅР° РЇРєРѕРІРёРЅР°", "33"));
+		PLAYERS_FULL.add(new Player("РћР»РµРЅР° Р‘РѕР№РєРѕ", "15"));
+		PLAYERS_FULL.add(new Player("РЎРІС–С‚Р»Р°РЅР° Р‘С”РґРЅР°", "3"));
+		PLAYERS_FULL.add(new Player("РЎРѕС„С–СЏ Р”СѓРЅР°С”РІР°", "8"));
+		PLAYERS_FULL.add(new Player("РЎРѕС„С–СЏ РљР°СЃС‚СЂРёРєС–РЅР°", "25"));
+		PLAYERS_FULL.add(new Player("РўРµС‚СЏРЅР° РњР°С‡СѓР»РєР°", "23"));
 	}
 
 	public static final List<Player> PLAYERS = new ArrayList<Player>();
@@ -85,12 +85,12 @@ public class App {
 			return new ModelAndView(attributes, "statistics.html");
 		}, freeMarkerEngine);
 
-		// get("/admin", (request, response) -> {
-		// Map<String, Object> attributes = new HashMap<>();
-		//
-		// attributes.put("players", PLAYERS);
-		// return new ModelAndView(attributes, "index.html");
-		// }, freeMarkerEngine);
+		/*get("/admin", (request, response) -> {
+			Map<String, Object> attributes = new HashMap<>();
+
+			attributes.put("players", PLAYERS_FULL);
+			return new ModelAndView(attributes, "index.html");
+		}, freeMarkerEngine);*/
 
 		get("/players", (request, response) -> {
 			return PLAYERS;
